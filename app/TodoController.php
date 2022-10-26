@@ -3,12 +3,19 @@ namespace App;
 
 class TodoController
 {
+    private array $config = [
+        'host' => 'localhost',
+        'db' => 'todoDatabase',
+        'user' => 'admin',
+        'pass' => 'admin'
+    ];
+
     private TodoModel $todoModel;
     private TodoView $todoView;
 
     public function __construct()
     {
-        $this->todoModel = new namespace\TodoModel();
+        $this->todoModel = new namespace\TodoModel($this->config);
         $this->todoView = new namespace\TodoView();
     }
 

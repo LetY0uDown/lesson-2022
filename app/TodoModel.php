@@ -8,30 +8,32 @@ class TodoModel
 {
     private PDO $dbh;
 
-    public function __construct()
+    public function __construct(array $config)
     {
-        $this->dbh = new PDO('mysql:host=localhost;dbname=todoDatabase', 'admin', 'admin');
+        $this->dbh = new PDO('mysql:host='.$config['host'].';dbname='. $config['db'],
+                             $config['user'], $config['pass']);
     }
 
-    private function executeQuery(string $sql, array $params = [], bool $all = false) : array
+    private function executeQuery(string $sql, array $params = [])
+    {
+        $stmt = $this->dbh->prepare($sql);
+
+        $stmt->execute($params);
+    }
+
+    private function fetchData(string $sql, array $params = [], bool $all = false) : array
     {
         $stmt = $this->dbh->prepare($sql);
 
         $stmt->execute($params);
 
-        if ($all)
-        {
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }
-        else
-        {
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        }
+        return  $all ? $stmt->fetchAll(PDO::FETCH_ASSOC)
+                     : $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public  function  getAllWorks() : array
     {
-        return $this->executeQuery('SELECT * FROM worklist', all: true);
+        return $this->fetchData('SELECT * FROM worklist', all: true);
     }
 
     public function addNewWork(string $newWork)
@@ -48,18 +50,18 @@ class TodoModel
 
     public function getWorkByID(int $id) : array
     {
-        $query = "SELECT * FROM worklist  WHERE id = :id ;";
+        $query = "SELECT * FROM worklist  WHERE id = :id;";
 
         $params = [
             ':id' => $id
         ];
 
-        return $this->executeQuery($query, $params,'false');
+        return $this->fetchData($query, $params);
     }
 
     public function updateWorkData(int $id, string $work)
     {
-        $query = "UPDATE worklist SET  work_name = :work  WHERE id = :id ;";
+        $query = "UPDATE worklist SET  work_name = :work  WHERE id = :id;";
 
         $params = [
             ':work' => $work,
@@ -71,12 +73,12 @@ class TodoModel
 
     public function changeStatus(array $work)
     {
-        $status = $work['work_status'] == 0 ? 1 : 0;
+        $newStatus = 1 - (int)$work['work_status'];
 
         $query = "UPDATE worklist SET  work_status = :status  WHERE id = :id;";
 
         $params = [
-            ':status' => $status,
+            ':status' => $newStatus,
             ':id' => $work['id'],
         ];
 

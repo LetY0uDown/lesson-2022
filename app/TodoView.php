@@ -21,13 +21,16 @@ class TodoView
     {
         include 'templates/header.php';
 
-        $form = $this->showForm(
+        $hiddenValues = [
+            'id' => $work['id']
+        ];
+
+        $form = $this->showForm (
             '/update',
             'Редактирование',
             $work['work_name'],
-            [
-                'id' => $work['id']
-            ]);
+            $hiddenValues
+        );
 
         echo $this->getRow($form);
 
@@ -69,26 +72,31 @@ class TodoView
     public function generateHtmlWorkList(array $workList) : string
     {
         $html = '';
+
         foreach ($workList as $row) {
-            $html .= '<li class="list-group-item';
+            $background = $row['work_status'] == 0 ? '#ffbbbb'
+                                                   : '#bbffbb';
 
-            if($row['work_status'] == 1) {
-                $html .= 'list-group-item-success';
-            }
-            $html .= '">'.$row['work_name'];
+            $html .= '<li class="list-group-item" style="background-color: '.$background.'; margin-top: 5px;">';
 
-            $html .= '<a href="change/'.$row['id'].'"class="btn btn-outline-success btn-sm ml-5">';
-            $html .= '<span><i class="fas fa-check-circle "></i></span></a>';
-            $html .= '<a href="edit/'.$row['id'];
+            $html .= $row['work_name'];
 
-            $html .= '"class="btn  btn-outline-primary btn-sm">';
+            $id = $row['id'];
 
-            $html .= '<i class="fas fa-pen"></i></a>';
-
-            $html .= '<a href="del/'.$row['id'];
-            $html .= '"class="btn btn-outline-danger btn-sm">';
-            $html .= '<i class="fas fa-trash-alt"></i></a></li>';
+            $html .= $this->getIconLink('change/'.$id, 'fas fa-check-circle', 'success');
+            $html .= $this->getIconLink('edit/'.$id, 'fas fa-pen', 'primary');
+            $html .= $this->getIconLink('del/'.$id, 'fas fa-trash-alt', 'danger');
         }
+
         return $html;
+    }
+
+    private function getIconLink(string $action, string $icon, string $color) : string
+    {
+        $html = '<a href="'.$action;
+        $html .= '"class="btn  btn-outline-'.$color.' btn-sm" style="margin: 5px;">';
+        $html .= '<i class="'.$icon.'"></i></a>';
+
+        return  $html;
     }
 }
