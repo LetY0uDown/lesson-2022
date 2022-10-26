@@ -57,7 +57,7 @@ class TodoView
         $form .= '</div>';
 
         if(!empty($hidden)) {
-            foreach ($hidden as $key => $value ) {
+            foreach ($hidden as $key => $value) {
                 $form .= '<input type="hidden" class="form-control" name="'.$key;
                 $form .= '" value="'.$value.'">';
             }
@@ -79,13 +79,13 @@ class TodoView
 
             $html .= '<li class="list-group-item" style="background-color: '.$background.'; margin-top: 5px;">';
 
-            $html .= $row['work_name'];
-
             $id = $row['id'];
 
-            $html .= $this->getIconLink('change/'.$id, 'fas fa-check-circle', 'success');
-            $html .= $this->getIconLink('edit/'.$id, 'fas fa-pen', 'primary');
-            $html .= $this->getIconLink('del/'.$id, 'fas fa-trash-alt', 'danger');
+            $html .= $this->getIconLink('change/'.$id,  'fas fa-check-circle',  'success');
+            $html .= $this->getIconLink('edit/'.$id,    'fas fa-pen',           'primary');
+            $html .= $this->getIconLink('del/'.$id,     'fas fa-trash-alt',     'danger');
+
+            $html .= '<span style="margin-left: 15px; font-weight: bold;">'.$row['work_name'].'</span>';
         }
 
         return $html;
@@ -93,10 +93,9 @@ class TodoView
 
     private function getIconLink(string $action, string $icon, string $color) : string
     {
-        $html = '<a href="'.$action;
-        $html .= '"class="btn  btn-outline-'.$color.' btn-sm" style="margin: 5px;">';
+        $html = '<a href="'.$action.'" class="btn btn-outline-'.$color.' btn-sm" style="margin: 5px;">';
         $html .= '<i class="'.$icon.'"></i></a>';
 
-        return  $html;
+        return $html;
     }
 }
